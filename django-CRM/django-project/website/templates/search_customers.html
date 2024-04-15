@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  /* Search Feature Styles */
+  .customer-search-form {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+
+  .customer-search-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .customer-search-button {
+    padding: 0.5rem 1rem;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .customer-search-results {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+
+  .customer-search-item {
+    margin-bottom: 0.5rem;
+  }
+</style>
+
+<form action="{% url 'search_customers' %}" method="get" class="customer-search-form">
+  <input type="text" name="q" placeholder="Search records..." class="customer-search-input" />
+  <button type="submit" class="customer-search-button">Search</button>
+</form>
+
+<div class="customer-search-results">
+  {% if records %}
+  <ul>
+    {% for record in records %}
+    <li class="customer-search-item">
+      <strong> {{ record.first_name }} <br> {{ record.last_name }} <br> {{ record.email }} <br> {{ record.phone }} <br>
+        {{ record.address }} <br> {{ record.created_at }} <br> {{ record.city }} <br> {{ record.state }} <br> {{ record.zipcode }} </strong>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+
+  {% endif %}
+</div>
+{% endblock %}

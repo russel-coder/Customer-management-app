@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SignUpForm, AddRecordForm
 from .models import Record
-
+from django.db.models import Q  # Import for complex filtering
 
 def home(request):
 	records = Record.objects.all()
@@ -99,3 +99,32 @@ def update_record(request, pk):
 	else:
 		messages.success(request, "You Must Be Logged In...")
 		return redirect('home')
+
+
+
+def search_customers(request):
+    if request.user.is_authenticated:  # Optional authentication check
+        query = request.GET.get('q')  # Get search query from URL parameter
+        if query:
+            # Combine search terms using OR operator (|)
+            search_fields = ['first_name', 'email', 'last_name', 'city', 'zipcode', 'state', 'phone', 'address']
+            search_terms = Q()  # Start with an empty Q object
+
+            for field_name in search_fields:
+                search_terms |= Q(**{field_name + '__icontains': query})
+
+            # Additional filtering for primary key (assuming it's an integer field)
+            try:
+                pk_value = int(query)  # Attempt to convert query to integer (for primary key)
+                search_terms &= Q(pk=pk_value)  # Filter by primary key if conversion succeeds
+            except ValueError:
+                pass  # Ignore conversion errors (if query isn't an integer)
+
+            records = Record.objects.filter(search_terms)  # Filter based on combined search terms
+        else:
+            records = None
+        return render(request, 'search_customers.html', {'records': records})
+
+
+
+
