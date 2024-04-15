@@ -125,6 +125,5 @@ def search_customers(request):
             records = None
         return render(request, 'search_customers.html', {'records': records})
 
-
-
+# just a test to check if branch works correctly
 
